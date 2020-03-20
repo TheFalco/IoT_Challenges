@@ -2,7 +2,7 @@
 
 configuration HomeChallenge1AppC {}
 implementation {
-  components MainC, HomeChallenge1C, LedsC;
+  components MainC, HomeChallenge1C as App, LedsC;
   components new AMSenderC(AM_RADIO_COUNT_MSG);
   components new AMReceiverC(AM_RADIO_COUNT_MSG);
   components new TimerMilliC() as Timer0;
@@ -10,16 +10,16 @@ implementation {
   components new TimerMilliC() as Timer2;  
   components ActiveMessageC;
   
-  HomeChallenge1C.Boot -> MainC.Boot;
+  App.Boot -> MainC.Boot;
   
-  HomeChallenge1C.Receive -> AMReceiverC;
-  HomeChallenge1C.AMSend -> AMSenderC;
-  HomeChallenge1C.AMControl -> ActiveMessageC;
-  HomeChallenge1C.Leds -> LedsC;
-  HomeChallenge1C.Timer0 -> Timer0;
-  HomeChallenge1C.Timer1 -> Timer1;
-  HomeChallenge1C.Timer2 -> Timer2;  
-  HomeChallenge1C.Packet -> AMSenderC;
+  App.Receive -> AMReceiverC;
+  App.AMSend -> AMSenderC;
+  App.AMControl -> ActiveMessageC;
+  App.Leds -> LedsC;
+  App.Timer0 -> Timer0;
+  App.Timer1 -> Timer1;
+  App.Timer2 -> Timer2;  
+  App.Packet -> AMSenderC;
 }
 
 

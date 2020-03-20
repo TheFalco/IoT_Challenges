@@ -27,13 +27,20 @@ implementation {
 
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
-      call Timer0.startPeriodic(1000);
-      call Timer1.startPeriodic(333);
-      call Timer2.startPeriodic(200);
-    }
-    else {
-      call AMControl.start();
-    }
+
+		if (TOS_NODE_ID == 1) {    
+		  call Timer0.startPeriodic(1000);
+		}
+		else if (TOS_NODE_ID == 2) {
+		  call Timer1.startPeriodic(333);
+		}
+		else {
+		  call Timer2.startPeriodic(200);
+		}
+	}
+	else {
+		call AMControl.start();
+	}
   }
 
   event void AMControl.stopDone(error_t err) {
@@ -53,7 +60,7 @@ implementation {
       }
       //Creating the message
       rcm->counter = counter;
-      rcm->moteID  = 0;
+      rcm->moteID  = TOS_NODE_ID;
       if (call AMSend.send(AM_BROADCAST_ADDR, &packet, sizeof(radio_message)) == SUCCESS) { //send message as broadcast
 	    locked = TRUE;
       }
@@ -73,14 +80,14 @@ implementation {
       }
       //Creating the message
       rcm->counter = counter;
-      rcm->moteID  = 1;
+      rcm->moteID  = TOS_NODE_ID;
       if (call AMSend.send(AM_BROADCAST_ADDR, &packet, sizeof(radio_message)) == SUCCESS) { //send message as broadcast
 	    locked = TRUE;
       }
     }
   }
 
-    // event for the third mote
+  // event for the third mote
   event void Timer2.fired() {
     
     if (locked) {
@@ -93,12 +100,13 @@ implementation {
       }
       //Creating the message
       rcm->counter = counter;
-      rcm->moteID  = 2;
+      rcm->moteID  = TOS_NODE_ID;
       if (call AMSend.send(AM_BROADCAST_ADDR, &packet, sizeof(radio_message)) == SUCCESS) { //send message as broadcast
 	    locked = TRUE;
       }
     }
   }
+  
   //event for receving the message
   event message_t* Receive.receive(message_t* bufPtr, void* payload, uint8_t len) {
     // we check the size of message
@@ -109,20 +117,23 @@ implementation {
     else {
       counter++;
       rcm = (radio_message*)payload;
-      if (rcm->moteID == 0) {
+      if (rcm->moteID == 1) {
           call Leds.led0Toggle();
       }
-      if (rcm->moteID == 1) {
+      if (rcm->moteID == 2) {
           call Leds.led1Toggle();
       }
-      if (rcm->moteID == 2) {
+      if (rcm->moteID == 3) {
           call Leds.led2Toggle();
       }
+      
+      //Turning off all LEDs
       if ((rcm->counter) % 10 == 0) {
         call Leds.led0Off();
         call Leds.led1Off();
         call Leds.led2Off();
       }
+      
       return bufPtr;
     }
   }
@@ -135,3 +146,4 @@ implementation {
   }
 
 }
+
