@@ -1,13 +1,13 @@
 <tos_image>
   <ident>
-    <hostname>user-iot</hostname>
     <deluge_support>no</deluge_support>
-    <timestamp>5E74D32AL</timestamp>
-    <platform>telosb</platform>
+    <uidhash>4DDF2493L</uidhash>
     <userhash>2C00343AL</userhash>
-    <uidhash>DCC8F54AL</uidhash>
-    <username>user</username>
+    <timestamp>5E74F14BL</timestamp>
+    <hostname>user-iot</hostname>
     <appname>HomeChallenge1A</appname>
+    <platform>telosb</platform>
+    <username>user</username>
   </ident>
   <image format="ihex">
 :104000005542200135D0085A824578123140003996
