@@ -1,5 +1,5 @@
-#ifndef SENDACK_H
-#define SENDACK_H
+#ifndef HOMECHALLENGE2_H
+#define HOMECHALLENGE2_H
 
 #define REQ 1
 #define RESP 2 

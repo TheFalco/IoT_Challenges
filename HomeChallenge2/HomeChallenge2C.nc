@@ -1,7 +1,7 @@
-#include "sendAck.h"
+#include "HomeChallenge2.h"
 #include "Timer.h"
 
-module sendAckC {
+module HomeChallenge2C {
 
   uses {
   /****** INTERFACES *****/
@@ -25,7 +25,7 @@ module sendAckC {
 
 } implementation {
 
-  uint8_t counter=0;
+  uint8_t counter = 0;
   uint8_t rec_id;
   message_t packet;
 
@@ -35,9 +35,9 @@ module sendAckC {
   
   //***************** Send request function ********************//
   void sendReq() {
+  	my_msg_t* rcm = (my_msg_t*)call Packet.getPayload(&packet, sizeof(my_msg_t));
 	dbg("radio_send", "Creating the message.\n");
 	// Creating the msg
-	my_msg_t* rcm = (my_msg_t*)call Packet.getPayload(&packet, sizeof(my_msg_t));
     if (rcm == NULL) {
 		return;
     }
@@ -53,12 +53,13 @@ module sendAckC {
     	dbgerror("radio_send", "Error with ACK request! for counter = %d\n", rcm->msg_counter);
 	}
 	// Send an UNICAST message to the correct node
-	if(call AMSend.send(1, &packet,sizeof(my_msg_t)) == SUCCESS){
+	if(call AMSend.send(2, &packet,sizeof(my_msg_t)) == SUCCESS){
 	    dbg("radio_send", "Packet passed to lower layer successfully!\n");
 	    dbg("radio_pack",">>>Pack\n \t Payload length %hhu \n", call Packet.payloadLength(&packet));
 	    dbg_clear("radio_pack","\t Payload Sent\n");
-		dbg_clear("radio_pack", "\t\t type: %hhu \n", rcm->msg_type);
-		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);	 
+		dbg_clear("radio_pack", "\t\t type: %hhu (1: REQ, 2:RESP)\n", rcm->msg_type);
+		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);
+		dbg_clear("radio_pack", "\t\t (value: %hhu)\n", rcm->value);	 
   	}
  }        
 
@@ -70,7 +71,7 @@ module sendAckC {
 
   //***************** Boot interface ********************//
   event void Boot.booted() {
-	dbg("boot","Application booted.\n");
+	dbg("boot","Application booted. Current Node: %d\n", TOS_NODE_ID);
 	call SplitControl.start();
   }
 
@@ -78,7 +79,8 @@ module sendAckC {
   event void SplitControl.startDone(error_t err){
 	if ( err == SUCCESS) {
 		dbg("radio", "Radio successfully on.\n");
-		if (TOS_NODE_ID == 0) {
+		if (TOS_NODE_ID == 1) {
+			dbg("radio", "Node %d: starting timer.\n", TOS_NODE_ID);
 			call Timer0.startPeriodic(1000);
 		}
 	}
@@ -86,7 +88,8 @@ module sendAckC {
   
   event void SplitControl.stopDone(error_t err){
     /* Fill it ... */
-	dbg("role", "Shutting down mote... \n");
+	dbg("role", "Shutting down motes... \n");
+	dbg("role", "End of communication. \n");
   }
 
   //***************** MilliTimer interface ********************//
@@ -98,30 +101,34 @@ module sendAckC {
 
   //********************* AMSend interface ****************//
   event void AMSend.sendDone(message_t* buf,error_t err) {
-
+	my_msg_t* rcm = (my_msg_t*)call Packet.getPayload(&packet, sizeof(my_msg_t));
 	// Check if the packet is sent
 	if (&packet == buf && err == SUCCESS) {
       	dbg("radio_send", "Packet sent...");
     	dbg_clear("radio_send", " at time %s \n", sim_time_string());
 		counter++;
-		dbg("radio_send", "Counter increased, new value = %d\n", counter);
+		if(rcm->msg_type == REQ){
+			dbg("radio_send", "Counter increased, new value = %d\n", counter);
+		}
     }
     else{
       	dbgerror("radio_send", "Send done error!");
     }
-	
-	my_msg_t* rcm = (my_msg_t*)call Packet.getPayload(&packet, sizeof(my_msg_t));
 	// Check if the ACK is received
 	if (call PacketAcknowledgements.wasAcked(&packet)) {
-      	dbg("radio_send", "Packet sent...");
       	dbg_clear("radio_ack", "Ack received at time %s.\n", sim_time_string());
  	  	dbg_clear("radio_ack", "\t\t counter: %hhu \n", rcm->msg_counter);
 		// Stop the timer
-		call Timer0.stop();
+		if(rcm->msg_type == RESP){
+			call SplitControl.stop();
+		}
+		else{
+			dbg("radio", "Timer stopped.\n");
+			call Timer0.stop();
+		}
     }
     else{
       	dbgerror("radio_ack", "Ack not received!\n");
-		// Do not stop the timer. After 1000ms the timer will fire again
     }
   }
 
@@ -139,7 +146,7 @@ module sendAckC {
     	dbg("radio_pack"," Payload length %hhu \n", call Packet.payloadLength( buf ));
     	dbg("radio_pack", ">>>Pack \n");
     	dbg_clear("radio_pack","\t\t Payload Received\n" );
-    	dbg_clear("radio_pack", "\t\t type: %hhu \n ", rcm->msg_type);
+    	dbg_clear("radio_pack", "\t\t type: %hhu (1: REQ, 2:RESP)\n ", rcm->msg_type);
 		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);
 		dbg_clear("radio_pack", "\t\t value: %hhu \n", rcm->value);
 
@@ -152,7 +159,7 @@ module sendAckC {
 			sendResp();
 		} else {
 			//Received a response (RESP)
-			dbg("radio_rec", "Response received. Value of the sensor = %hhu", rcm->value);
+			dbg("radio_rec", "Response received. Value of the sensor = %hhu\n", rcm->value);
 		}
 
       	return buf;
@@ -161,10 +168,9 @@ module sendAckC {
   
   //************************* Read interface **********************//
   event void Read.readDone(error_t result, uint16_t data) {
-	dbg("role","Value read %f\n",data);
-
 	// Prepare the response (RESP)
 	my_msg_t* rcm = (my_msg_t*)call Packet.getPayload(&packet, sizeof(my_msg_t));
+	dbg("role","Sensor's read value: %hhu\n", data);
 	if (rcm == NULL) {
 		return;
     }
@@ -181,11 +187,13 @@ module sendAckC {
 	}
 
 	// Send an UNICAST message to the correct node
-	if(call AMSend.send(0, &packet,sizeof(my_msg_t)) == SUCCESS){
+	if(call AMSend.send(1, &packet,sizeof(my_msg_t)) == SUCCESS){
 	    dbg("radio_send", "Packet passed to lower layer successfully!\n");
 	    dbg("radio_pack",">>>Pack\n \t Payload length %hhu \n", call Packet.payloadLength(&packet));
 	    dbg_clear("radio_pack","\t Payload Sent\n");
-		dbg_clear("radio_pack", "\t\t type: %hhu \n", rcm->msg_type);
-		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);	 
+		dbg_clear("radio_pack", "\t\t type: %hhu (1: REQ, 2:RESP)\n", rcm->msg_type);
+		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);
+		dbg_clear("radio_pack", "\t\t value: %hhu\n", rcm->value); 
+  	}
   	}
 }

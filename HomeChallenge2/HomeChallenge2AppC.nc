@@ -1,12 +1,12 @@
-#include "sendAck.h"
+#include "HomeChallenge2.h"
 
-configuration sendAckAppC {}
+configuration HomeChallenge2AppC {}
 
 implementation {
 
 
 /****** COMPONENTS *****/
-  components MainC, sendAckC as App;
+  components MainC, HomeChallenge2C as App;
   components new TimerMilliC() as Timer0;
   components new FakeSensorC();
   //Dobbiamo usare anche fakesensorP?  
