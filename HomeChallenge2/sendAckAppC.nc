@@ -11,8 +11,8 @@ implementation {
   components new FakeSensorC();
   //Dobbiamo usare anche fakesensorP?  
   components ActiveMessageC;
-  components new AMSenderC(AM_SEND_MSG);
-  components new AMReceiverC(AM_SEND_MSG);
+  components new AMSenderC(AM_MY_MSG);
+  components new AMReceiverC(AM_MY_MSG);
 
 /****** INTERFACES *****/
   //Boot interface

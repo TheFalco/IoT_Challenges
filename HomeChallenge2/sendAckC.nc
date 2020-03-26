@@ -90,9 +90,9 @@ module sendAckC {
   }
 
   //***************** MilliTimer interface ********************//
-  event void MilliTimer.fired() {
+  event void Timer0.fired() {
 	dbg("boot", "Timer Fired!\n");
-	call sendReq();
+	sendReq();
   }
   
 
@@ -100,7 +100,7 @@ module sendAckC {
   event void AMSend.sendDone(message_t* buf,error_t err) {
 
 	// Check if the packet is sent
-	if (&packet == buf && error == SUCCESS) {
+	if (&packet == buf && err == SUCCESS) {
       	dbg("radio_send", "Packet sent...");
     	dbg_clear("radio_send", " at time %s \n", sim_time_string());
 		counter++;
@@ -130,13 +130,13 @@ module sendAckC {
 	if (len != sizeof(my_msg_t)) {
 
       	dbgerror("radio_rec", "Receiving error \n");
-		return bufPtr;
+		return buf;
 	}
     else {
     	my_msg_t* rcm = (my_msg_t*)payload;
 		// Read the content of the message
     	dbg("radio_rec", "Received packet at time %s\n", sim_time_string());
-    	dbg("radio_pack"," Payload length %hhu \n", call Packet.payloadLength( bufPtr ));
+    	dbg("radio_pack"," Payload length %hhu \n", call Packet.payloadLength( buf ));
     	dbg("radio_pack", ">>>Pack \n");
     	dbg_clear("radio_pack","\t\t Payload Received\n" );
     	dbg_clear("radio_pack", "\t\t type: %hhu \n ", rcm->msg_type);
@@ -149,13 +149,13 @@ module sendAckC {
 			// Saving the counter value
 			rec_id = rcm->msg_counter;
 			// Send the response
-			call sendResp();
+			sendResp();
 		} else {
 			//Received a response (RESP)
 			dbg("radio_rec", "Response received. Value of the sensor = %hhu", rcm->value);
 		}
 
-      	return bufPtr;
+      	return buf;
     }
   }
   
