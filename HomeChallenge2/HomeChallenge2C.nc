@@ -15,6 +15,7 @@ module HomeChallenge2C {
 
 	//interface for timer
  	interface Timer<TMilli> as Timer0;	
+ 	//interface Timer<TMilli> as Timer1;
 
     //other interfaces, if needed
 	interface PacketAcknowledgements;
@@ -55,7 +56,7 @@ module HomeChallenge2C {
 	// Send an UNICAST message to the correct node
 	if(call AMSend.send(2, &packet,sizeof(my_msg_t)) == SUCCESS){
 	    dbg("radio_send", "Packet passed to lower layer successfully!\n");
-	    dbg("radio_pack",">>>Pack\n \t Payload length %hhu \n", call Packet.payloadLength(&packet));
+	    dbg("radio_pack",">>>Pack sent:\n \t Payload length %hhu \n", call Packet.payloadLength(&packet));
 	    dbg_clear("radio_pack","\t Payload Sent\n");
 		dbg_clear("radio_pack", "\t\t type: %hhu (1: REQ, 2:RESP)\n", rcm->msg_type);
 		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);
@@ -71,7 +72,7 @@ module HomeChallenge2C {
 
   //***************** Boot interface ********************//
   event void Boot.booted() {
-	dbg("boot","Application booted. Current Node: %d\n", TOS_NODE_ID);
+	dbg("boot","Application booted at %s. Current Node: %d\n", sim_time_string(), TOS_NODE_ID);
 	call SplitControl.start();
   }
 
@@ -88,7 +89,7 @@ module HomeChallenge2C {
   
   event void SplitControl.stopDone(error_t err){
     /* Fill it ... */
-	dbg("role", "Shutting down motes... \n");
+	dbg("role", "Shutting down mote %d... \n", TOS_NODE_ID);
 	dbg("role", "End of communication. \n");
   }
 
@@ -97,6 +98,12 @@ module HomeChallenge2C {
 	dbg("boot", "Timer Fired!\n");
 	sendReq();
   }
+  
+  /*event void Timer1.fired() {
+	dbg("role", "Ending operations on mote %d... \n", TOS_NODE_ID);
+	call SplitControl.stop();
+  }
+  */
   
 
   //********************* AMSend interface ****************//
@@ -116,8 +123,8 @@ module HomeChallenge2C {
     }
 	// Check if the ACK is received
 	if (call PacketAcknowledgements.wasAcked(&packet)) {
-      	dbg_clear("radio_ack", "Ack received at time %s.\n", sim_time_string());
- 	  	dbg_clear("radio_ack", "\t\t counter: %hhu \n", rcm->msg_counter);
+      	dbg_clear("radio_ack", "\t\tAck received at time %s.\n", sim_time_string());
+ 	  	dbg_clear("radio_ack", "\t\tCounter of the received message: %hhu \n", rcm->msg_counter);
 		// Stop the timer
 		if(rcm->msg_type == RESP){
 			call SplitControl.stop();
@@ -142,9 +149,9 @@ module HomeChallenge2C {
     else {
     	my_msg_t* rcm = (my_msg_t*)payload;
 		// Read the content of the message
-    	dbg("radio_rec", "Received packet at time %s\n", sim_time_string());
+    	dbg("radio_rec", " Received packet at time %s\n", sim_time_string());
     	dbg("radio_pack"," Payload length %hhu \n", call Packet.payloadLength( buf ));
-    	dbg("radio_pack", ">>>Pack \n");
+    	dbg("radio_pack", ">>>Pack received: \n");
     	dbg_clear("radio_pack","\t\t Payload Received\n" );
     	dbg_clear("radio_pack", "\t\t type: %hhu (1: REQ, 2:RESP)\n ", rcm->msg_type);
 		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);
@@ -160,6 +167,7 @@ module HomeChallenge2C {
 		} else {
 			//Received a response (RESP)
 			dbg("radio_rec", "Response received. Value of the sensor = %hhu\n", rcm->value);
+			//call Timer1.startOneShot(1);
 		}
 
       	return buf;
@@ -189,7 +197,7 @@ module HomeChallenge2C {
 	// Send an UNICAST message to the correct node
 	if(call AMSend.send(1, &packet,sizeof(my_msg_t)) == SUCCESS){
 	    dbg("radio_send", "Packet passed to lower layer successfully!\n");
-	    dbg("radio_pack",">>>Pack\n \t Payload length %hhu \n", call Packet.payloadLength(&packet));
+	    dbg("radio_pack",">>>Pack sent\n \t Payload length %hhu \n", call Packet.payloadLength(&packet));
 	    dbg_clear("radio_pack","\t Payload Sent\n");
 		dbg_clear("radio_pack", "\t\t type: %hhu (1: REQ, 2:RESP)\n", rcm->msg_type);
 		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);
@@ -197,3 +205,4 @@ module HomeChallenge2C {
   	}
   	}
 }
+

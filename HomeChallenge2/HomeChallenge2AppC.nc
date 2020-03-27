@@ -8,6 +8,7 @@ implementation {
 /****** COMPONENTS *****/
   components MainC, HomeChallenge2C as App;
   components new TimerMilliC() as Timer0;
+  //components new TimerMilliC() as Timer1;
   components new FakeSensorC();
   //Dobbiamo usare anche fakesensorP?  
   components ActiveMessageC;
@@ -29,6 +30,7 @@ implementation {
   App.PacketAcknowledgements -> AMSenderC.Acks;
   //Timer interface
   App.Timer0 -> Timer0;
+  //App.Timer1 -> Timer1;
   //Fake Sensor read
   App.Read -> FakeSensorC;
 
