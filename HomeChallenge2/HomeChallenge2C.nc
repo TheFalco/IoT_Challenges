@@ -15,7 +15,7 @@ module HomeChallenge2C {
 
 	//interface for timer
  	interface Timer<TMilli> as Timer0;	
- 	//interface Timer<TMilli> as Timer1;
+ 	interface Timer<TMilli> as Timer1;
 
     //other interfaces, if needed
 	interface PacketAcknowledgements;
@@ -88,7 +88,6 @@ module HomeChallenge2C {
   }
   
   event void SplitControl.stopDone(error_t err){
-    /* Fill it ... */
 	dbg("role", "Shutting down mote %d... \n", TOS_NODE_ID);
 	dbg("role", "End of communication. \n");
   }
@@ -99,13 +98,11 @@ module HomeChallenge2C {
 	sendReq();
   }
   
-  /*event void Timer1.fired() {
+  event void Timer1.fired() {
 	dbg("role", "Ending operations on mote %d... \n", TOS_NODE_ID);
 	call SplitControl.stop();
   }
-  */
   
-
   //********************* AMSend interface ****************//
   event void AMSend.sendDone(message_t* buf,error_t err) {
 	my_msg_t* rcm = (my_msg_t*)call Packet.getPayload(&packet, sizeof(my_msg_t));
@@ -167,7 +164,7 @@ module HomeChallenge2C {
 		} else {
 			//Received a response (RESP)
 			dbg("radio_rec", "Response received. Value of the sensor = %hhu\n", rcm->value);
-			//call Timer1.startOneShot(1);
+			call Timer1.startOneShot(1);
 		}
 
       	return buf;
@@ -203,6 +200,6 @@ module HomeChallenge2C {
 		dbg_clear("radio_pack", "\t\t counter: %hhu \n", rcm->msg_counter);
 		dbg_clear("radio_pack", "\t\t value: %hhu\n", rcm->value); 
   	}
-  	}
+  }
 }
 
