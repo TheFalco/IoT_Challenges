@@ -1,0 +1,163 @@
+********************************************
+*                                          *
+*             TOSSIM Script                *
+*                                          *
+********************************************
+Initializing mac....
+Initializing radio channels....
+    using topology file: topology.txt
+    using noise file: meyer-heavy.txt
+Initializing simulator....
+Activate debug message on channel init
+Activate debug message on channel boot
+Activate debug message on channel radio
+Activate debug message on channel radio_send
+Activate debug message on channel radio_ack
+Activate debug message on channel radio_rec
+Activate debug message on channel radio_pack
+Activate debug message on channel role
+Creating node 1...
+>>>Will boot at time 0 [sec]
+Creating node 2...
+>>>Will boot at time 5 [sec]
+Creating radio channels...
+>>>Setting radio channel from node  1  to node  2  with gain  -60.0  dBm
+>>>Setting radio channel from node  2  to node  1  with gain  -60.0  dBm
+Initializing Closest Pattern Matching (CPM)...
+Reading noise model data file: meyer-heavy.txt
+Loading:##Done!
+>>>Creating noise model for node: 1
+>>>Creating noise model for node: 2
+Start simulation with TOSSIM! 
+
+
+
+DEBUG (1): Application booted at 0:0:0.000000000. Current Node: 1
+DEBUG (1): Radio successfully on.
+DEBUG (1): Node 1: starting timer.
+DEBUG (1): Timer Fired!
+DEBUG (1): Creating the message.
+DEBUG (1): Sending the request. Counter = 0.
+DEBUG (1): ACK enabled.
+DEBUG (1): Packet passed to lower layer successfully!
+DEBUG (1): >>>Pack sent:
+ 	 Payload length 5 
+	 Payload Sent
+		 type: 1 (1: REQ, 2:RESP)
+		 counter: 0 
+		 (value: 0)
+DEBUG (1): Packet sent... at time 0:0:0.985717730 
+DEBUG (1): Counter increased, new value = 1
+ERROR (1): Ack not received!
+DEBUG (1): Timer Fired!
+DEBUG (1): Creating the message.
+DEBUG (1): Sending the request. Counter = 1.
+DEBUG (1): ACK enabled.
+DEBUG (1): Packet passed to lower layer successfully!
+DEBUG (1): >>>Pack sent:
+ 	 Payload length 5 
+	 Payload Sent
+		 type: 1 (1: REQ, 2:RESP)
+		 counter: 1 
+		 (value: 0)
+DEBUG (1): Packet sent... at time 0:0:1.955169675 
+DEBUG (1): Counter increased, new value = 2
+ERROR (1): Ack not received!
+DEBUG (1): Timer Fired!
+DEBUG (1): Creating the message.
+DEBUG (1): Sending the request. Counter = 2.
+DEBUG (1): ACK enabled.
+DEBUG (1): Packet passed to lower layer successfully!
+DEBUG (1): >>>Pack sent:
+ 	 Payload length 5 
+	 Payload Sent
+		 type: 1 (1: REQ, 2:RESP)
+		 counter: 2 
+		 (value: 0)
+DEBUG (1): Packet sent... at time 0:0:2.939529371 
+DEBUG (1): Counter increased, new value = 3
+ERROR (1): Ack not received!
+DEBUG (1): Timer Fired!
+DEBUG (1): Creating the message.
+DEBUG (1): Sending the request. Counter = 3.
+DEBUG (1): ACK enabled.
+DEBUG (1): Packet passed to lower layer successfully!
+DEBUG (1): >>>Pack sent:
+ 	 Payload length 5 
+	 Payload Sent
+		 type: 1 (1: REQ, 2:RESP)
+		 counter: 3 
+		 (value: 0)
+DEBUG (1): Packet sent... at time 0:0:3.915023762 
+DEBUG (1): Counter increased, new value = 4
+ERROR (1): Ack not received!
+DEBUG (1): Timer Fired!
+DEBUG (1): Creating the message.
+DEBUG (1): Sending the request. Counter = 4.
+DEBUG (1): ACK enabled.
+DEBUG (1): Packet passed to lower layer successfully!
+DEBUG (1): >>>Pack sent:
+ 	 Payload length 5 
+	 Payload Sent
+		 type: 1 (1: REQ, 2:RESP)
+		 counter: 4 
+		 (value: 0)
+DEBUG (1): Packet sent... at time 0:0:4.887252791 
+DEBUG (1): Counter increased, new value = 5
+ERROR (1): Ack not received!
+DEBUG (2): Application booted at 0:0:5.000000000. Current Node: 2
+DEBUG (2): Radio successfully on.
+DEBUG (1): Timer Fired!
+DEBUG (1): Creating the message.
+DEBUG (1): Sending the request. Counter = 5.
+DEBUG (1): ACK enabled.
+DEBUG (1): Packet passed to lower layer successfully!
+DEBUG (1): >>>Pack sent:
+ 	 Payload length 5 
+	 Payload Sent
+		 type: 1 (1: REQ, 2:RESP)
+		 counter: 5 
+		 (value: 0)
+DEBUG (2):  Received packet at time 0:0:5.864196759
+DEBUG (2):  Payload length 5 
+DEBUG (2): >>>Pack received: 
+		 Payload Received
+		 type: 1 (1: REQ, 2:RESP)
+ 		 counter: 5 
+		 value: 0 
+DEBUG (2): Request received, sending the response...
+DEBUG (2): Reading from the sensor...
+DEBUG (1): Packet sent... at time 0:0:5.864364604 
+DEBUG (1): Counter increased, new value = 6
+		Ack received at time 0:0:5.864364604.
+		Counter of the received message: 5 
+DEBUG (1): Timer stopped.
+DEBUG (2): Sensor's read value: 245
+DEBUG (2): Sending the response.
+DEBUG (2): ACK enabled.
+DEBUG (2): Packet passed to lower layer successfully!
+DEBUG (2): >>>Pack sent
+ 	 Payload length 5 
+	 Payload Sent
+		 type: 2 (1: REQ, 2:RESP)
+		 counter: 5 
+		 value: 245
+DEBUG (1):  Received packet at time 0:0:5.876007072
+DEBUG (1):  Payload length 5 
+DEBUG (1): >>>Pack received: 
+		 Payload Received
+		 type: 2 (1: REQ, 2:RESP)
+ 		 counter: 5 
+		 value: 245 
+DEBUG (1): Response received. Value of the sensor = 245
+DEBUG (2): Packet sent... at time 0:0:5.876174918 
+		Ack received at time 0:0:5.876174918.
+		Counter of the received message: 5 
+DEBUG (2): Shutting down mote 2... 
+DEBUG (2): End of communication. 
+DEBUG (1): Ending operations on mote 1... 
+DEBUG (1): Shutting down mote 1... 
+DEBUG (1): End of communication.
+
+
+
