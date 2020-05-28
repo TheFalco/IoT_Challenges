@@ -1,4 +1,3 @@
- 
 // Note: You can also add this define in your makefile to supress the 
 //       warning about the new printf semanics.  Just all the following line:
 //       CFLAGS += -DNEW_PRINTF_SEMANTICS
@@ -9,6 +8,8 @@
 configuration HC5AppC{
 }
 implementation {
+
+  /****** COMPONENTS *****/
   components MainC, HC5C as App;
   components new TimerMilliC();
   components PrintfC;
@@ -18,11 +19,12 @@ implementation {
   components ActiveMessageC;
   components RandomC;
 
+/****** INTERFACES *****/
   App.Boot -> MainC.Boot;
   App.MilliTimer -> TimerMilliC;
-  App.Receive -> AMReceiverC;
   App.AMSend -> AMSenderC;
-  App.AMControl -> ActiveMessageC;
   App.Packet -> AMSenderC;
+  App.Receive -> AMReceiverC;
+  App.AMControl -> ActiveMessageC;
   App.Random -> RandomC;
 }
