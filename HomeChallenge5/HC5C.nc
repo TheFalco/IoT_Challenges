@@ -39,9 +39,7 @@ implementation {
       }
       rcm->value = call Random.rand16();
       //The message should be between 0 and 100
-      if (rcm->value >= 100) {
-        rcm->value = rcm->value%100;
-      }
+      rcm->value = rcm->value%100;
       rcm->topic = TOS_NODE_ID;
       //Send message to node 1
       if (call AMSend.send(1, &packet, sizeof(radio_msg_t)) == SUCCESS) {
@@ -57,6 +55,7 @@ implementation {
     else {
       radio_msg_t* rcm = (radio_msg_t*)payload;
       printf("%u,%u\n", rcm->value, rcm->topic);
+     	printfflush();
       return bufPtr;
     }
   }
