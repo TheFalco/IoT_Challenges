@@ -12,6 +12,7 @@ module HC5C {
     interface Timer<TMilli> as MilliTimer;
     interface SplitControl as AMControl;
     interface Packet;
+    interface Random;
 
   }
 
@@ -41,7 +42,10 @@ event void MilliTimer.fired() {
     if (rcm == NULL) {
       return;
     }
-    rcm->value = 10;
+    rcm->value = call Random.rand16();
+    if (rcm->value > 100) {
+      rcm->value = rcm->value%100;
+    }
     rcm->topic = TOS_NODE_ID;
     //send message to node 1
     if (call AMSend.send(1, &packet, sizeof(radio_msg_t)) == SUCCESS) {
