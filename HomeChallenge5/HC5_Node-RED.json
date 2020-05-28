@@ -1,0 +1,1 @@
+[{"id":"d6a12fb2.d68fa","type":"function","z":"b5d1af96.0416f8","name":"mote3","func":"msg.topic = \"mote3/random/value/\";\nmsg.payload = msg.payload.substring(0, msg.payload.length - 2);\nif (msg.payload > 70) {\n    return null;\n}\nreturn msg;","outputs":1,"noerr":0,"x":830,"y":300,"wires":[["4c31adae.0e429c"]]}]
